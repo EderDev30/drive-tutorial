@@ -10,3 +10,9 @@
 - [x] Make sure sort order is consistent
 - [ ] Add delete
 - [ ] Add homepage + onboarding
+
+## Fun follow ups
+
+### Folder deletions
+
+Make sure you fetch all of the folders that have it as a parent, and their children too
