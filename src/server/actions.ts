@@ -63,7 +63,7 @@ export async function getAllFolderIds(folderId: number): Promise<number[]> {
       .from(folders_table)
       .where(eq(folders_table.parent, current));
 
-    for (let child of children) {
+    for (const child of children) {
       queue.push(child.id);
     }
   }
@@ -94,7 +94,7 @@ export async function deleteFolder(folderId: number) {
   );
   const fileIds = files.map((f) => f.id);
 
-  const [_, dbDeleteFileResult, dbDeleteFolderResult] = await Promise.all([
+  const [, dbDeleteFileResult, dbDeleteFolderResult] = await Promise.all([
     utApi.deleteFiles(filesKeys),
     db.delete(files_table).where(inArray(files_table.id, fileIds)),
     db.delete(folders_table).where(inArray(folders_table.id, folderIds)),

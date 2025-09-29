@@ -23,7 +23,7 @@ export function NewFolderDialog(props: { folderId: number }) {
     e.preventDefault();
     setIsLoading(true);
     const formData = new FormData(e.currentTarget);
-    const name = formData.get("name")?.toString().trim() ?? "";
+    const name = (formData.get("name") as string).trim() ?? "";
 
     const result = await createFolder(name, props.folderId);
 
