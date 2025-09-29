@@ -10,6 +10,8 @@
 - [x] Make sure sort order is consistent
 - [x] Add delete
 - [x] Real homepage + onboarding
+- [ ] Add toast
+- [ ] Update File table to save file keys
 
 ## Fun follow ups
 
@@ -17,9 +19,14 @@
 
 Make sure you fetch all of the folders that have it as a parent, and their children too
 
+- [x] Delete folders
+- [ ] Confirmation for delete
+
 ### Folder creations
 
 Make a server action that takes a name and parentId, and creates a folder with that name and parentId (don't forget to set the ownerId).
+
+- [x] Create folders
 
 ### Access control
 
