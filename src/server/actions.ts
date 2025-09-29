@@ -3,9 +3,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { db } from "~/server/db";
-import { files_table } from "~/server/db/schema";
+import { files_table, folders_table } from "~/server/db/schema";
 import { UTApi } from "uploadthing/server";
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 const utApi = new UTApi();
 
@@ -43,6 +44,32 @@ export async function deleteFile(fileId: number) {
 
   const c = await cookies();
   c.set("force-refresh", JSON.stringify(Math.random()));
+
+  return { success: true };
+}
+
+export async function createFolder(name: string, parentId: number) {
+  console.log("createFolder");
+  const session = await auth();
+  if (!session.userId) {
+    return {
+      error: "Unauthorized",
+    };
+  }
+
+  if (!name) {
+    return {
+      error: "Folder name cannot be empty",
+    };
+  }
+
+  await db.insert(folders_table).values({
+    name: name,
+    parent: parentId,
+    ownerId: session.userId,
+  });
+
+  revalidatePath(`/f/${parentId}`);
 
   return { success: true };
 }

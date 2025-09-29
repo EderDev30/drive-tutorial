@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { UploadButton } from "~/components/uploadthing";
 import type { files_table, folders_table } from "~/server/db/schema";
 import { FileRow, FolderRow } from "./file-row";
+import { NewFolderDialog } from "./new-folder-dialog";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -64,15 +65,18 @@ export default function DriveContents(props: {
             ))}
           </ul>
         </div>
-        <UploadButton
-          endpoint="driveUploader"
-          onClientUploadComplete={() => {
-            navigate.refresh();
-          }}
-          input={{
-            folderId: props.currentFolderId,
-          }}
-        />
+        <div className="mt-2 flex gap-2">
+          <NewFolderDialog folderId={props.currentFolderId} />
+          <UploadButton
+            endpoint="driveUploader"
+            onClientUploadComplete={() => {
+              navigate.refresh();
+            }}
+            input={{
+              folderId: props.currentFolderId,
+            }}
+          />
+        </div>
       </div>
     </div>
   );
