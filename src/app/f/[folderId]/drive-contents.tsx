@@ -8,15 +8,32 @@ import { UploadButton } from "~/components/uploadthing";
 import type { files_table, folders_table } from "~/server/db/schema";
 import { FileRow, FolderRow } from "./file-row";
 import { NewFolderDialog } from "./new-folder-dialog";
+import { useState } from "react";
+import {
+  DeleteConfirmationDialog,
+  type DeleteTarget,
+} from "./delete-confirmation-dialog";
+import { deleteFile, deleteFolder } from "~/server/actions";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
   folders: (typeof folders_table.$inferSelect)[];
   parents: (typeof folders_table.$inferSelect)[];
-
   currentFolderId: number;
 }) {
   const navigate = useRouter();
+  const [target, setTarget] = useState<DeleteTarget | null>(null);
+  const [open, setOpen] = useState(false);
+
+  async function handleOnConfirm() {
+    if (!target) return;
+    if (target.type === "folder") {
+      await deleteFolder(target.id);
+    } else {
+      await deleteFile(target.id);
+    }
+    setTarget(null);
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 p-8 text-gray-100">
@@ -58,13 +75,43 @@ export default function DriveContents(props: {
           </div>
           <ul>
             {props.folders.map((folder) => (
-              <FolderRow key={folder.id} folder={folder} />
+              <FolderRow
+                key={folder.id}
+                folder={folder}
+                onDeleteClick={() => {
+                  setTarget({
+                    id: folder.id,
+                    name: folder.name,
+                    type: "folder",
+                  });
+                  setOpen(true);
+                }}
+              />
             ))}
             {props.files.map((file) => (
-              <FileRow key={file.id} file={file} />
+              <FileRow
+                key={file.id}
+                file={file}
+                onDeleteClick={() => {
+                  setTarget({
+                    id: file.id,
+                    name: file.name,
+                    type: "file",
+                  });
+                  setOpen(true);
+                }}
+              />
             ))}
           </ul>
         </div>
+        {target && (
+          <DeleteConfirmationDialog
+            open={open}
+            onOpenChange={setOpen}
+            target={target}
+            onConfirm={() => handleOnConfirm()}
+          />
+        )}
         <div className="mt-2 flex gap-2">
           <NewFolderDialog folderId={props.currentFolderId} />
           <UploadButton

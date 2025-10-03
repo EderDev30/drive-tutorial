@@ -30,17 +30,11 @@ export async function deleteFile(fileId: number) {
     };
   }
 
-  const utpApiResult = await utApi.deleteFiles([
+  await utApi.deleteFiles([
     file.url.replace("https://x6o0nv7rr8.ufs.sh/f/", ""),
   ]);
 
-  console.log(utpApiResult);
-
-  const dbDeleteResult = await db
-    .delete(files_table)
-    .where(eq(files_table.id, fileId));
-
-  console.log(dbDeleteResult);
+  await db.delete(files_table).where(eq(files_table.id, fileId));
 
   const c = await cookies();
   c.set("force-refresh", JSON.stringify(Math.random()));
