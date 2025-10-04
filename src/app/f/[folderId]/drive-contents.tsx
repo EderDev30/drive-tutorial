@@ -49,20 +49,25 @@ export default function DriveContents(props: {
       <div className="mx-auto max-w-6xl">
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center">
-            <Link href={"/f/1"} className="mr-2 text-gray-300 hover:text-white">
-              My Drive
-            </Link>
-            {props.parents.map((folder) => (
-              <div key={folder.id} className="flex items-center">
-                <ChevronRight className="mx-2 text-gray-500" size={16} />
-                <Link
-                  href={`/f/${folder.id}`}
-                  className="text-gray-300 hover:text-white"
-                >
-                  {folder.name}
-                </Link>
-              </div>
-            ))}
+            {props.parents.map((folder, index) => {
+              const isRoot =
+                folder.name.toLowerCase() === "root" && !folder.parent;
+              const label = isRoot ? "My Drive" : folder.name;
+
+              return (
+                <div key={folder.id} className="flex items-center">
+                  {index > 0 && (
+                    <ChevronRight className="mx-2 text-gray-500" size={16} />
+                  )}
+                  <Link
+                    href={`/f/${folder.id}`}
+                    className="text-gray-300 hover:text-white"
+                  >
+                    {label}
+                  </Link>
+                </div>
+              );
+            })}
           </div>
           <div>
             <SignedOut>
