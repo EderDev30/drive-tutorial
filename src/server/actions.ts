@@ -30,9 +30,7 @@ export async function deleteFile(fileId: number) {
     };
   }
 
-  await utApi.deleteFiles([
-    file.url.replace("https://x6o0nv7rr8.ufs.sh/f/", ""),
-  ]);
+  await utApi.deleteFiles([file.fileKey]);
 
   await db.delete(files_table).where(eq(files_table.id, fileId));
 
@@ -78,14 +76,12 @@ export async function deleteFolder(folderId: number) {
   const files = await db
     .select({
       id: files_table.id,
-      url: files_table.url,
+      fileKey: files_table.fileKey,
     })
     .from(files_table)
     .where(inArray(files_table.parent, folderIds));
 
-  const filesKeys = files.map((f) =>
-    f.url.replace("https://x6o0nv7rr8.ufs.sh/f/", ""),
-  );
+  const filesKeys = files.map((f) => f.fileKey);
   const fileIds = files.map((f) => f.id);
 
   const [, dbDeleteFileResult, dbDeleteFolderResult] = await Promise.all([

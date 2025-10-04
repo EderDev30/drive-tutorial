@@ -66,6 +66,7 @@ export const MUTATIONS = {
       size: number;
       url: string;
       parent: number;
+      fileKey: string;
     };
     userId: string;
   }) {
