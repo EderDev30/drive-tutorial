@@ -10,8 +10,8 @@
 - [x] Make sure sort order is consistent
 - [x] Add delete
 - [x] Real homepage + onboarding
-- [ ] Add toast
-- [ ] Update File table to save file keys
+- [x] Add toast
+- [x] Update File table to save file keys
 
 ## Fun follow ups
 
