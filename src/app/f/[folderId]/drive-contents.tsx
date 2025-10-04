@@ -14,6 +14,7 @@ import {
   type DeleteTarget,
 } from "./delete-confirmation-dialog";
 import { deleteFile, deleteFolder } from "~/server/actions";
+import { showToast } from "~/lib/toast-message";
 
 export default function DriveContents(props: {
   files: (typeof files_table.$inferSelect)[];
@@ -27,12 +28,20 @@ export default function DriveContents(props: {
 
   async function handleOnConfirm() {
     if (!target) return;
-    if (target.type === "folder") {
-      await deleteFolder(target.id);
-    } else {
-      await deleteFile(target.id);
+
+    try {
+      if (target.type === "folder") {
+        await deleteFolder(target.id);
+      } else {
+        await deleteFile(target.id);
+      }
+
+      showToast.delete.success(target.type, target.name);
+      setTarget(null);
+    } catch (err) {
+      console.error("Failed to delete:", err);
+      showToast.delete.error(target.type, target.name);
     }
-    setTarget(null);
   }
 
   return (
@@ -116,8 +125,17 @@ export default function DriveContents(props: {
           <NewFolderDialog folderId={props.currentFolderId} />
           <UploadButton
             endpoint="driveUploader"
-            onClientUploadComplete={() => {
+            onClientUploadComplete={(res) => {
+              if (!res) return;
+              if (res.length === 1) {
+                showToast.create.success("file", res[0]!.name);
+              } else {
+                showToast.create.success("file", `${res.length} files`);
+              }
               navigate.refresh();
+            }}
+            onUploadError={(error) => {
+              showToast.create.error("file", error.message);
             }}
             input={{
               folderId: props.currentFolderId,

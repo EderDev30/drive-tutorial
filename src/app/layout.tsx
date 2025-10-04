@@ -4,6 +4,7 @@ import { type Metadata } from "next";
 import { Geist } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { PostHogProvider } from "./_providers/posthog-provider";
+import { Toaster } from "~/components/ui/sonner";
 
 export const metadata: Metadata = {
   title: "Drive Tutorial",
@@ -24,6 +25,7 @@ export default function RootLayout({
       <html lang="en" className={`${geist.variable}`}>
         <body>
           <PostHogProvider>{children}</PostHogProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

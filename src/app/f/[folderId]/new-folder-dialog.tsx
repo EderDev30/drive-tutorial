@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "~/components/ui/dialog";
 import { Input } from "~/components/ui/input";
+import { showToast } from "~/lib/toast-message";
 import { createFolder } from "~/server/actions";
 
 export function NewFolderDialog(props: { folderId: number }) {
@@ -22,18 +23,27 @@ export function NewFolderDialog(props: { folderId: number }) {
   async function handleOnSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
+
     const formData = new FormData(e.currentTarget);
-    const name = (formData.get("name") as string).trim() ?? "";
+    const name = (formData.get("name") as string)?.toString().trim() ?? "";
 
-    const result = await createFolder(name, props.folderId);
+    try {
+      const result = await createFolder(name, props.folderId);
 
-    if (result?.error) {
-      setError(result.error);
-    } else {
-      setError(null);
-      setOpen(false);
+      if (result?.error) {
+        setError(result.error);
+        showToast.create.error("folder", name);
+      } else {
+        setError(null);
+        setOpen(false);
+        showToast.create.success("folder", name);
+      }
+    } catch (err) {
+      console.error("Failed to create folder:", err);
+      showToast.create.error("folder", name);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   }
 
   return (

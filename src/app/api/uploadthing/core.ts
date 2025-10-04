@@ -57,7 +57,7 @@ export const ourFileRouter = {
       });
 
       // !!! Whatever is returned here is sent to the clientside `onClientUploadComplete` callback
-      return { uploadedBy: metadata.userId };
+      return { uploadedBy: metadata.userId, name: file.name };
     }),
 } satisfies FileRouter;
 
